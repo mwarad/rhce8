@@ -1,0 +1,17 @@
+---
+- name: Configure SSH 
+  hosts: all
+  become: yes
+  vars:
+    sshd_port: '2022'
+    allowed_users: 'ansible'
+    permit_root_login: 'yes'
+
+  pre_tasks:
+    - name: ensure selinux is enforced
+      selinux:
+        policy: targeted
+        state: enforcing
+
+  roles:
+    - ssh

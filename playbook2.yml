@@ -1,0 +1,13 @@
+---
+- name: setup webclients
+  hosts: webclients
+  become: yes
+
+  tasks:
+    - name: install curl and wget
+      yum:
+        name:
+          - curl
+          - wget
+        state: present
+       

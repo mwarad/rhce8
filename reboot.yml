@@ -1,0 +1,25 @@
+- hosts: test
+  tasks:
+    - name: check all the updates
+      yum:
+        list: updates
+      register: output
+    - name: parseoutput
+      set_fact:
+        packages: "{{ output|json_query('results[*].name') }}"
+    - name: print packages
+      debug:
+        var: packages
+    - name: run the reboot module when listed packages are available in the package list
+      reboot:
+        reboot_timeout: 300
+      register: reboot_started
+      when: '"kernel" in packages or "glibc" in packages or "linux-firmware" in packages or "systemd" in packages or "dbus" in packages or "udev" in packages or "hal" in packages'
+        #- name: Check SSH connectivity to the host post reboot
+        #wait_for:
+        #port: 22
+        #host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        #delay: 15
+        #timeout: 300
+        #state: started
+        #when: reboot_started is changed

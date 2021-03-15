@@ -1,0 +1,6 @@
+---
+- name: test web server
+  hosts: webservers
+  become: yes
+  roles:
+    - role: 15-sample-apache

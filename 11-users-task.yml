@@ -1,0 +1,6 @@
+---
+- name:
+  block:
+    - name:
+      debug:
+        msg: hello world

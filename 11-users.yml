@@ -1,0 +1,10 @@
+---
+- name:
+  hosts: all
+  become: yes
+  vars_files:
+    - vars/11-user_list2.yml
+  tasks:
+    - name: Include tasks
+      include_tasks: 11-user-task.yml
+      loop: "{{ users }}"

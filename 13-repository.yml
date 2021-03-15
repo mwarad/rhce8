@@ -1,0 +1,15 @@
+---
+- name: create repository file
+  hosts: webclients
+  become: yes
+  tasks:
+    - name: create repo file
+      yum_repository:
+        name: mysql8-community
+        description: MySQL 8 YUM Repoo
+        file: mysqlrepo
+        baseurl: http://repo.mysql.com/yum/mysql-8.0-community/el/8/x86_64 
+        gpgcheck: yes
+        enabled: yes
+        gpgkey: http://repo.mysql.com/RPM-GPG-KEY-mysql
+

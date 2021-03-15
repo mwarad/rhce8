@@ -1,0 +1,12 @@
+---
+- name: create user
+  hosts: test
+  become: yes
+  vars_files:
+    - userpass_vars.yml
+  tasks:
+    - name: create user
+      user:
+        name: "{{ username }}"
+        password: "{{ password }}"
+        state: present

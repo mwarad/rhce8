@@ -1,0 +1,41 @@
+---
+- name: configure sshd config file
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    mode: 0640
+  notify: restart sshd
+
+- name: install firewall
+  yum:
+    name: firewalld
+    state: present
+
+- name: start firewall service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: configure ssh_port to open
+  firewalld:
+    port: "{{ sshd_port }}/tcp"
+    immediate: yes
+    permanent: yes
+    state: enabled
+
+- name: install policycoreutils-python package
+  yum:
+    name: 
+      - policycoreutils
+      - python3-policycoreutils
+    state: present
+
+- name: set selinux content for port
+  seport:
+    ports: "{{ sshd_port }}"
+    proto: "tcp"
+    setype: "ssh_port_t"
+    state: present
+

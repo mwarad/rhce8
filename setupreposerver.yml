@@ -1,0 +1,54 @@
+---
+- name: Setup a Repository Server
+  hosts: localhost 
+  become: yes
+  vars:
+  vars_files:
+  
+  tasks:
+    - name: Loop mount the RHEL ISO
+      mount:
+        path: /var/ftp/repo
+        src: /dev/sr0
+        fstype: iso9660
+        opts: ro,noauto
+        state: present
+    
+    - name: firewalld service is disbaled
+      service:
+        name: firewalld
+        state: stopped
+      ignore_errors: yes
+
+    - name: install vsftpd
+      yum:
+        name: vsftpd
+        state: present
+
+    - name: configure vsftpd to allow anon users
+      lineinfile:
+        regexp: "^anonymous_enable"
+        line: "anonymous_enable=yes"
+        path: /etc/vsftpd/vsftpd.conf
+
+    - name: configure vsftp root for anon users
+      lineinfile:
+        regexp: "^anon_root"
+        #insertAfter: "anonymous_enable"
+        line: "anon_root=/var/ftp/repo"
+        path: /etc/vsftpd/vsftpd.conf
+
+    - name: vsftpd service is enabled and started
+      service:
+        name: vsftpd
+        state: restarted
+        enabled: yes
+
+    - name: configure boolean for ftp
+      seboolean:
+        name: ftpd_full_access
+        state: on 
+        persistent: yes
+
+  handlers:
+

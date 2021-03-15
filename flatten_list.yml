@@ -1,0 +1,11 @@
+---
+- name: test the list flattening
+  hosts: all
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: show my list one at a time
+      debug: 
+        msg: "Items- {{ item }}"
+      loop: "{{ my_host_list | flatten }}"

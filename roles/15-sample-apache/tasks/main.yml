@@ -1,0 +1,34 @@
+---
+# tasks file for 15-sample-apache
+- name: install apache
+  yum:
+    name: "{{ httpd_package }}"
+    state: present
+
+- name: start apache service
+  service:
+    name: "{{ httpd_service }}"
+    state: started
+    enabled: yes
+
+- name: install firewalld
+  yum:
+    name: firewalld
+    state: present
+
+- name: start firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: configure firewall service
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: apache
+    group: apache
+    mode: 0644
+    setype: httpd_sys_content_t
+  notify: restart httpd
+  

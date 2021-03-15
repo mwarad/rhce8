@@ -1,0 +1,7 @@
+---
+# vars file for 15-sample-apache
+httpd_package: httpd
+mod_ssl_package: mod_ssl
+php_package: php
+
+httpd_service: httpd

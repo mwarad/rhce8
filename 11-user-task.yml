@@ -1,0 +1,14 @@
+---
+- name:
+  block:
+    - name: create profs group
+      group:
+        name: profs
+        state: present
+    - name: create user
+      user:
+        name: "{{ item.name }}"
+        password: "{{ '{{ item.password }}' | password_hash( 'sha256', 'mysecretsalt' ) }}"
+        append: yes
+        groups: "{{ item.department }}"
+  when: item.department == 'profs' and inventory_hostname in groups.webservers

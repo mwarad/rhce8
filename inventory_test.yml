@@ -1,0 +1,15 @@
+# inventory file:
+all:
+  bastions:
+    hosts:
+      host1
+      host2 
+  opservers:
+    hosts:
+      host3
+      host4
+      host5
+# vars
+my_host_list:
+  - "{{ groups['bastions'] }}"
+  - "{{ groups['opservers'] }}"

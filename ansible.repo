@@ -1,0 +1,11 @@
+[baseos]
+name=baseos
+baseurl=ftp://control.example.com/BaseOS
+gpgcheck=no
+enabled=yes
+
+[appstream]
+name=appstream
+baseurl=ftp://control.example.com/AppStream
+gpgcheck=no
+enabled=yes

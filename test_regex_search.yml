@@ -1,0 +1,68 @@
+---
+- hosts: localhost
+
+  vars:
+    commands:
+      strategy: all     #all/any
+      command:
+        command_name: echo 'hello world'
+        strategy: all        #all/any 
+        case_sensitive: no   #yes/no
+        search_strings:
+            item:
+               search_string: hello
+               Compliance: compliant
+            item:
+               search_string: world
+               Compliance: compliant              
+      command:
+        command_name: echo 'hello world'
+        strategy: all        #all/any 
+        case_sensitive: no   #yes/no        
+        search_strings:
+              item:
+                 search_string: hello
+                 Compliance: compliant
+              item:
+                 search_string: world
+                 Compliance: compliant                
+
+  tasks:  
+   - debug:
+      msg: "Hello World "
+ 
+   - name: set counter
+     set_fact:
+       command_counter: 0
+
+   - name: set counter
+     include: command.yml
+     vars:
+       command: "{{item}}"
+     with_items: "{{commands}}"
+     when: item.find("command")!=-1
+
+
+   - name: Verify compliance state
+     set_fact:
+      compliance_state: 'COMPLIANT'
+      recommended_action1: ""
+     #each of the command invocation has to pass .. total commands = command counter
+     when: (commands.strategy == all) and (command_counter|int == {{commands.command|length}})
+
+   - name: Verify compliance state
+     set_fact:
+      compliance_state: 'COMPLIANT'
+      recommended_action1: ""
+     #any of the command invocation has to pass .. command counter = 1
+     when: (commands.strategy == any) and (command_counter|int >= 1)
+
+   - name: Verify compliance state
+     set_fact:
+      compliance_state: 'NON-COMPLIANT'
+      recommended_action1: ""
+     when: compliance_state != 'COMPLIANT' 
+
+   - debug:
+      msg: "compliance_state -----------  {{compliance_state}}"   
+

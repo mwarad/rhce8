@@ -1,0 +1,29 @@
+---
+- hosts: all
+  #serial: 1
+  tasks:
+    - name: Init if not
+      connection: local
+      delegate_to: localhost
+      delegate_facts: true
+      run_once: true
+      set_fact:
+        test_var: "start"
+      when:
+        hostvars['localhost']['test_var'] is not defined
+    - name: Add inventory_hostname into test_var
+      connection: local
+      delegate_to: localhost
+      delegate_facts: true
+      #throttle: 1
+      set_fact:
+        test_var: "{{ hostvars['localhost']['test_var'] }}-{{ inventory_hostname }}"
+      vars:
+        test_var: "{{ hostvars['localhost']['test_var']|d('Undefined') }}"
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Print errors
+      debug:
+        var: hostvars['localhost']['test_var']
+      when: hostvars['localhost']['test_var'] is defined

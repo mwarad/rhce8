@@ -1,0 +1,9 @@
+---
+- name: install nginx and redis
+  become: yes
+  vars:
+    nginx_yum_repo_enabled: false
+  hosts: ansible4.example.com
+  roles:
+    - role: geerlingguy.redis
+    - role: geerlingguy.nginx

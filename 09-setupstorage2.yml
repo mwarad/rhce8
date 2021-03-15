@@ -1,0 +1,28 @@
+---
+- name: vgdata exists
+  become: yes
+  hosts: all 
+  tasks:
+    #    - name:
+    #  command: vgs vgdata
+    #  register: result
+    #  ignore_errors: yes
+    #- name:
+    #  debug:
+    #    msg: 'vgdata does not exist' 
+    #  when: 'result.rc != 0'
+    #- name:
+    #  debug:
+    #    msg: 'vgdata exist'
+    #  when: 'result.rc == 0'
+    #- name:
+    #  debug:
+    #    msg: 'insufficient disk space available'
+    #  when: '
+    - name: check if vgdata exists
+      debug:
+        msg: |
+          'vgdata exist'
+          'Sufficient disk space'
+      when:  "'vgdata' in item.device" 
+      loop: "{{ ansible_mounts }}"

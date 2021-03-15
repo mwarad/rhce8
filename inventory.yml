@@ -1,0 +1,30 @@
+ungrouped:
+  hosts:
+    ansible4.example.com
+
+test:
+  hosts:
+    ansible1.example.com
+
+dev:
+  hosts:
+    ansible2.example.com
+
+prod:
+  hosts:
+    ansible3.example.com
+    ansible4.example.com
+
+servers:
+  children:
+    dev:
+    prod:
+
+webservers:
+  hosts:
+    ansible1.example.com
+
+webclients:
+  hosts:
+    ansible2.example.com
+    ansible3.example.com

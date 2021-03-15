@@ -1,0 +1,41 @@
+---
+- name: setup storage
+  become: yes 
+  hosts: test 
+  tasks:
+    - name:
+      block:
+        - name: create partition
+          parted:
+            device: /dev/sdb
+            number: 1
+            state: present
+            part_end: '100%'
+        - name: setup lvm volume group
+          lvg:
+            vg: vgdata
+            pvs: /dev/sdb1
+            pesize: '8MiB'
+        - name: create volume
+          lvol:
+            vg: vgdata
+            lv: lvdata
+            size: '1024m'
+        - name: format the volume
+          filesystem:
+            fstype: xfs
+            dev: /dev/vgdata/lvdata
+        - name: ensure lvdata has 1GiB
+          lvol:
+            vg: vgdata
+            lv: lvdata
+            size: '1024m'
+            resizefs: yes
+        - name: ensure it is mounted 
+          mount:
+            path: /data
+            src: /dev/vgdata/lvdata
+            fstype: xfs
+            state: mounted
+      when: "'sdb' in ansible_devices"
+

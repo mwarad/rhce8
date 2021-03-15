@@ -1,0 +1,16 @@
+---
+- name:
+  hosts: all
+  become: yes
+  vars:
+  vars_files:
+  tasks:
+    - name: Setup etc hosts file
+      template:
+        src: etchosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: 0644
+  handlers:
+

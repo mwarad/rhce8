@@ -1,0 +1,61 @@
+---
+- name: Creating webservers
+  hosts: webservers
+  become: yes
+  vars:
+    web_package: httpd
+    web_service: httpd
+    web_config_file: /etc/httpd/conf/httpd.conf
+    firewall_service: http
+
+  tasks:
+    - name: Install webserver
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start webserver
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: open port on firewall
+      firewalld:
+        service: http
+        state: enabled
+        immediate: yes
+        permanent: yes
+
+    - name: Configure webserver
+      template:
+        src: web/templates/vhost.conf.j2
+        dest: /etc/httpd/conf.d/vhost.conf
+        owner: root
+        group: root
+        mode: 0644
+        setype: httpd_config_t
+      notify: restart httpd
+
+    - name: create directory
+      file:
+        dest: "/var/www/{{ ansible_hostname }}"
+        state: directory
+        owner: root
+        group: root
+        setype: httpd_sys_content_t
+
+    - name: add content to the file
+      copy:
+        dest: "/var/www/{{ ansible_hostname }}/index.html"
+        content: "hello world!"
+        owner: root
+        group: root
+        mode: 0644
+        setype: httpd_sys_content_t
+
+  handlers:
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted

@@ -1,0 +1,13 @@
+---
+- name: create cron jobs
+  hosts: webclients
+  become: yes
+  tasks:
+    - name: create root cron job
+      cron:
+        name: date update
+        minute: '0'
+        hour: '*'
+        user: root
+        job: "date /var/log/time.log"
+

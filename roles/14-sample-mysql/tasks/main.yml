@@ -1,0 +1,64 @@
+---
+# tasks file for 14-sample-mysql
+- name: create a partition
+  parted:
+    device: /dev/sdc
+    number: 1
+    state: present
+    part_end: 700MB
+
+- name: create volume group
+  lvg:
+    vg: vg_database
+    pvs: /dev/sdc1
+
+- name: create logical volume
+  lvol:
+    vg: vg_database
+    lv: lv_mysql
+    size: 512
+    
+- name: filesystem create
+  filesystem:
+    fstype: xfs
+    dev: /dev/mapper/vg_database-lv_mysql
+
+- name: disable mysql 8.0
+  command: 'yum module disable -y mysql'
+  
+- name: install mysql
+  yum:
+    name: mysql-server
+    state: present
+
+- name: install firewalld
+  yum:
+    name: firewalld
+    state: present
+
+- name: start firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: config firewall
+  firewalld:
+    service: mysql
+    state: enabled
+    immediate: yes
+    persistent: yes
+
+- name: start mysql server
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+
+- name: copy config file
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0644

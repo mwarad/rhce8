@@ -1,0 +1,6 @@
+---
+- name: use role
+  hosts: ansible4.example.com 
+  become: yes
+  roles:
+    - role: 14-sample-mysql

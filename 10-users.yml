@@ -1,0 +1,17 @@
+---
+- name: create users on webserver
+  hosts: webservers
+  become: yes
+  vars_files:
+    - vars/10-user_list.yml
+    - vars/10-secret.yml
+  vars:
+  tasks:
+    - name: user create
+      user:
+        name: "{{ item.username }}"
+        uid: "{{ item.uid }}"
+        password: "{{ '{{ user_password }}' | password_hash('sha512', 'mysecretsalt') }}"
+      when: item.uid is match('^1') 
+      loop: "{{ users }}"
+

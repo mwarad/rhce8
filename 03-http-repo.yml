@@ -1,0 +1,47 @@
+---
+- name: http_repo
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: mount the iso file
+      mount:
+        src: /dev/sr0
+        path: /http_repo
+        fstype: iso9660
+        state: mounted
+
+    - name: disabled firewalld
+      service:
+        name: firewalld
+        state: stopped
+
+    - name: install httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: copy config file
+      copy:
+        src: httpd.conf
+        dest: /etc/httpd/httpd.conf
+        owner: root
+        group: root
+        mode: 0600
+      notify: restart httpd
+
+    - name: set se file context
+      sefcontext:
+        target: /http_repo
+        setype: httpd_sys_content_t
+        state: present
+
+    - name: appply restoreconv
+      command: restorecon -irv /http_repo
+
+  handlers:
+    - name: restart httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+

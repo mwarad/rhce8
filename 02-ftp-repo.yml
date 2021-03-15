@@ -1,0 +1,54 @@
+---
+- name: 02-ftp-repo
+  become: yes
+  hosts: localhost
+  tasks:
+    - name: mount the iso 
+      mount:
+        src: /dev/sr0
+        path: /ftp_repo
+        fstype: iso9660
+        state: mounted
+
+    - name: install firewalld
+      yum:
+        name: firewalld
+        state: present
+
+    - name: install firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: allow ftp service in firewall
+      firewalld:
+        service: ftp
+        immediate: yes
+        permanent: yes
+        state: enabled
+
+    - name: install vsftpd service
+      yum:
+        name: vsftpd
+        state: present
+
+    - name: configure vsftpd service
+      copy:
+        src: vsftpd.conf
+        dest: /etc/vsftpd/vsftpd.conf
+        owner: root
+        group: root
+        mode: 0600 
+
+    - name: start vsftpd service
+      service:
+        name: vsftpd
+        state: started
+        enabled: yes
+
+    - name: set sebool for ftp service
+      seboolean:
+        name: ftpd_full_access
+        state: yes
+        persistent: yes

@@ -1,0 +1,6 @@
+---
+# tasks file for ssh
+- name: Include tasks only if os is RedHat
+  import_tasks: sshd_config.yml
+  when: ansible_os_family == "RedHat"
+

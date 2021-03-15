@@ -1,0 +1,22 @@
+all:
+  children:
+    servers:
+      children:
+        dev:
+          hosts:
+            ansible2.example.com: {}
+        prod:
+          hosts:
+            ansible3.example.com: {}
+            ansible4.example.com: {}
+    test:
+      hosts:
+        ansible1.example.com: {}
+    ungrouped: {}
+    webclients:
+      hosts:
+        ansible2.example.com: {}
+        ansible3.example.com: {}
+    webservers:
+      hosts:
+        ansible1.example.com: {}
