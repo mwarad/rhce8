@@ -1,0 +1,16 @@
+---
+- hosts: test
+  vars:
+    distributed: 1
+  tasks:
+    - name: evaluate results - NON-distributed
+      assert:
+        that:
+          item.rc|int == 1
+        success_msg: "sapstartsrv has been successfully stopped on instance #{{ item.item }}."
+        fail_msg: "sapstartsrv is still running on instance #{{ item.item }}!"
+        quiet: yes
+      loop:
+        - { rc: "1", item: "message1" }
+        - { rc: "1", item: "message2" }
+      when: distributed is not defined
