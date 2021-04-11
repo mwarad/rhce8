@@ -1,0 +1,28 @@
+---
+- hosts: test
+  gather_facts: no 
+  vars:
+    myname: name
+  tasks:
+    - debug:
+        msg: "{{ myname | capitalize }}"
+    - assert:
+        that: "{{ [1,3,4,2] | unique | sort }} is ne([1,2,4])"
+    - name: default evaluation
+      debug:
+        msg: "{{ myvar | default('var') }}"
+    - name: math evaluation
+      debug:
+        msg: "{{ [2,4,6,8,10,12] | sum }}"
+    - name: fileglob
+      debug:
+        msg: "{{ lookup('fileglob', '~/.bash*', wantlist=true) }}"
+    - name: Test results of regex search and search-and-replace
+      #assert:
+      #that:
+      #- "'{{ 'marvin, arthur' | regex_search('ar\\S*r') }}' is eq( 'arthur' )"
+      #   - "'{{ 'arthur up' | regex_replace('ar(\\S*)r','\\1mb') }}' is eq( 'thumb up' )"
+      debug:
+        msg:
+          - "{{ 'marvin, arthur' | regex_search('ar(\\S*)r') }}"
+          - "{{ 'arthur arthumanrarthuman up' | regex_replace('ar(\\S*)r','\\1mb') }}"

@@ -1,0 +1,21 @@
+---
+- hosts: test 
+  tasks:
+    - name: find the file in /home/ansible/exam/copytest.yml
+      find:
+        path: /home/ansible/exam/
+        pattern: [ 'copy*.yml' ]
+      register: file2copy
+      delegate_to: localhost
+
+    - name: print the file2copy
+      debug:
+        var: file2copy
+
+        #- hosts: test
+        #tasks:
+    - name: copy the file to test
+      copy:
+        src: "{{ item.path }}"
+        dest: "/tmp/"
+      loop: "{{ file2copy.files }}"

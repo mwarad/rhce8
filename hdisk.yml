@@ -1,0 +1,15 @@
+---
+- hosts: test
+  tasks:
+    - name: Create list of hdisk devices on target host
+      set_fact:
+        hdisklist: "{{ ansible_devices | select('match' , '^sd') }}"
+    - name: iterate over hdisks, add WWN to disk item when matched with given disk WWN
+      set_fact:
+        disk_wwn: "{{ hostvars[inventory_hostname]['ansible_devices'][item]['attributes']['unique_id'] | regex_search(mywwn_openstack, ignorecase=True) }}"
+      loop: "{{ hdisklist }}"
+      register: hdisklist_wwn_out
+    - name: change var to results only
+      set_fact:
+        hdisklist_wwn: "{{ hdisklist_wwn_out['results'] }}"
+    - debug: msg="{{ hdisklist_wwn }}"

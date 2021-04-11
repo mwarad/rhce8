@@ -1,0 +1,23 @@
+---
+- hosts: test
+  vars:
+    "mntspace": 
+       "results": 
+         - "item": "/tmp"
+           "rc": 0
+           "start": "2021-03-22 13:17:33.738096"
+           "stderr": ""
+           "stderr_lines": []
+           "stdout": "Filesystem             1K-blocks    Used Available Use% Mounted on\n/dev/mapper/rootvg-tmp  10475520 1082092   9393428  11% /tmp"
+           "stdout_lines": 
+             - "Filesystem             1K-blocks    Used Available Use% Mounted on"
+             - "/dev/mapper/rootvg-tmp  10475520 1082092   9393428  11% /tmp"
+         - "item": "/home"
+           "stdout_lines":
+             - "Hello World"
+             - "I'm Testing"
+  tasks:
+    - name:
+      debug:
+        msg: "{{ item.stdout_lines }}"
+      loop: "{{ mntspace.results }}"
